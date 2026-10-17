@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-18
+
 ### Added
 - `origin` binding option: transactions carry the given transaction origin, so hosts sharing a `Y.Doc` with several writers can relay `doc.on("update")` events and tell the binding's writes apart from everything else
 
