@@ -13,4 +13,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Granular merging: edits apply per-key for objects and per-element for arrays, so concurrent edits to different fields merge without clobbering
 - `keys` binding option for shared `Y.Map`s with co-located foreign keys: the binding manages only the listed top-level keys (e.g. a form's schema subset), leaving intent-managed keys like a node's `x`/`y` canvas position to their other writers — form edits never delete them, and remote changes to them never re-render the form
 - Echo-loop protection via Jedison's `setValue(value, notifyParent, initiator)` initiator tagging (default `"yjs"`, configurable)
-- `destroy()` teardown, and pure `typeToJson` / `jsonToY` / `applyValue` / `jsonEqual` primitives for custom integrations
+- `destroy()` teardown, and pure `typeToJson` / `applyValue` / `jsonEqual` / `isPlainObject` / `pickKeys` primitives for custom integrations
+- Smoketests against real Jedison 1.13.0 under happy-dom, validating the initiator echo, user-input propagation, and echo-loop protection assumptions
+- GitHub Actions CI (lint, type check, tests) and tag-triggered npm publish via OIDC
