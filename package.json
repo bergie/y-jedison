@@ -1,0 +1,52 @@
+{
+  "name": "y-jedison",
+  "version": "0.1.0",
+  "description": "Jedison binding for Yjs — multiplayer JSON Schema forms",
+  "keywords": [
+    "jedison",
+    "yjs",
+    "crdt",
+    "json-schema",
+    "collaboration"
+  ],
+  "homepage": "https://github.com/bergie/y-jedison#readme",
+  "bugs": {
+    "url": "https://github.com/bergie/y-jedison/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bergie/y-jedison.git"
+  },
+  "license": "EUPL-1.2",
+  "author": "Henri Bergius <henri.bergius@iki.fi>",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "rm -rf dist && npm run types",
+    "lint": "npx @biomejs/biome check --use-editorconfig=true src/ test/",
+    "format": "npx @biomejs/biome check --use-editorconfig=true --write src/ test/",
+    "types": "tsc",
+    "test": "node --test --test-force-exit --test-timeout 5000 test/*.js"
+  },
+  "peerDependencies": {
+    "jedison": "^1.13.0",
+    "yjs": "^13.6.31"
+  },
+  "devDependencies": {
+    "jedison": "^1.13.0",
+    "typescript": "^6.0.3",
+    "yjs": "^13.6.31"
+  }
+}
