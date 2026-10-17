@@ -37,6 +37,12 @@ export const DEFAULT_INITIATOR = "yjs";
  *   same metadata map, managed by move intents — are neither overwritten by
  *   form edits nor re-rendered into the editor by remote changes. Ignored for
  *   Y.Array roots.
+ * @property {string} [origin] - Transaction origin stamped on the binding's
+ *   own writes. Hosts sharing a Y.Doc with several writers (collaborative
+ *   buffers, other bindings) relay `doc.on("update")` events onward and need
+ *   to tell the binding's transactions apart from everything else: the
+ *   document's update events carry this origin, and anything else on that
+ *   document is somebody else's write. Defaults to `null` (the Yjs default).
  */
 
 /**
@@ -83,6 +89,8 @@ export class JedisonBinding {
       Array.isArray(options.keys) && options.keys.length > 0
         ? options.keys.slice()
         : null;
+    /** @type {string|null} */
+    this.origin = options.origin ?? null;
     /** @type {Y.Doc|null} */
     this.doc = yType.doc;
     /** @type {boolean} */
@@ -186,7 +194,7 @@ export class JedisonBinding {
    */
   _transact(fn) {
     if (this.doc) {
-      this.doc.transact(fn);
+      this.doc.transact(fn, this.origin);
       return;
     }
     fn();

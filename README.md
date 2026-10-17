@@ -73,6 +73,7 @@ Returns a `JedisonBinding`.
 * `yType` — a `Y.Map` (object root) or `Y.Array` (array root), integrated into a `Y.Doc`. Scalar roots are not supported.
 * `options.initiator` — initiator tag used for remote-driven writes (default `"yjs"`)
 * `options.keys` — for `Y.Map` roots: the top-level keys this binding manages; see "Scoped bindings" above
+* `options.origin` — transaction origin stamped on the binding's own writes, so hosts sharing a `Y.Doc` with several writers can tell the binding's transactions apart in `doc.on("update")` events
 
 `binding.destroy()` detaches editor and shared type; both keep their current values.
 

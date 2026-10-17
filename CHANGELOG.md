@@ -7,7 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- `origin` binding option: transactions carry the given transaction origin, so hosts sharing a `Y.Doc` with several writers can relay `doc.on("update")` events and tell the binding's writes apart from everything else
 
+## [0.1.0] - 2026-10-18
+
+### Added
 - `yJedison(jedison, yType, options)` binding (and the underlying `JedisonBinding` class) for two-way sync between a Jedison JSON Schema form editor and a Yjs shared type (`Y.Map` for object roots, `Y.Array` for array roots)
 - Initial-state reconciliation: a non-empty shared type wins over the editor's start value, an empty shared type is seeded from the editor
 - Granular merging: edits apply per-key for objects and per-element for arrays, so concurrent edits to different fields merge without clobbering

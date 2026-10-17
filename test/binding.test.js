@@ -41,6 +41,30 @@ function createPeerDocs() {
   };
 }
 
+test("the origin option stamps the binding's transactions", () => {
+  const ydoc = new Y.Doc();
+  const ymap = ydoc.getMap("form");
+  const jedison = new MockJedison({ name: "Bergie", age: 45 });
+  yJedison(jedison, ymap, { origin: "signature:main" });
+
+  /** @type {Array<string | null>} */
+  const origins = [];
+  ydoc.on("update", (_update, origin) => {
+    origins.push(origin ?? null);
+  });
+
+  // A user edit writes with the binding's origin
+  jedison.setValue({ name: "Bergita", age: 45 });
+  jedison.emit("change", "user");
+  assert.deepEqual(origins, ["signature:main"]);
+
+  // And a host can tell the binding's writes apart from everything else
+  ydoc.transact(() => {
+    ymap.set("foreign", true);
+  }, "somebody-else");
+  assert.deepEqual(origins, ["signature:main", "somebody-else"]);
+});
+
 test("seeds the shared type from the editor when the type is empty", () => {
   const ydoc = new Y.Doc();
   const ymap = ydoc.getMap("form");
