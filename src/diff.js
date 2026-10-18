@@ -19,6 +19,44 @@
 import * as Y from "yjs";
 
 /**
+ * Whether a value is structurally a Y.Map. Structural checks rather than
+ * `instanceof`: a host may run a different Yjs copy than the binding's
+ * own (peer-dependency installs vendor or pin independently), and Yjs
+ * class identities do not cross copies.
+ *
+ * @param {any} value
+ * @returns {value is Y.Map<any>}
+ */
+export function isYMap(value) {
+  return (
+    typeof value?.get === "function" &&
+    typeof value?.set === "function" &&
+    typeof value?.delete === "function" &&
+    typeof value?.keys === "function" &&
+    typeof value?.size === "number" &&
+    typeof value?.observeDeep === "function" &&
+    typeof value?.toJSON === "function"
+  );
+}
+
+/**
+ * Whether a value is structurally a Y.Array.
+ *
+ * @param {any} value
+ * @returns {value is Y.Array<any>}
+ */
+export function isYArray(value) {
+  return (
+    typeof value?.insert === "function" &&
+    typeof value?.delete === "function" &&
+    typeof value?.get === "function" &&
+    typeof value?.length === "number" &&
+    typeof value?.observeDeep === "function" &&
+    typeof value?.toArray === "function"
+  );
+}
+
+/**
  * Converts a Yjs type tree (or scalar) to its plain JSON representation.
  * Scalars pass through untouched.
  *
@@ -26,7 +64,7 @@ import * as Y from "yjs";
  * @returns {any} Plain JSON representation of the value
  */
 export function typeToJson(value) {
-  if (value instanceof Y.Map) {
+  if (isYMap(value)) {
     /** @type {Record<string, any>} */
     const result = {};
     for (const [key, child] of value.entries()) {
@@ -34,7 +72,7 @@ export function typeToJson(value) {
     }
     return result;
   }
-  if (value instanceof Y.Array) {
+  if (isYArray(value)) {
     return value.toArray().map((child) => typeToJson(child));
   }
   return value;
@@ -62,7 +100,7 @@ export function typeToJson(value) {
  */
 export function applyValue(yType, value, options = {}) {
   const keys = normalizeKeys(options.keys);
-  if (yType instanceof Y.Map) {
+  if (isYMap(yType)) {
     if (!isPlainObject(value)) {
       // Kind mismatch (e.g. schema changed the root shape): clear the type.
       // Scalar roots are not supported — root Y types must be Y.Map or Y.Array.
@@ -79,7 +117,7 @@ export function applyValue(yType, value, options = {}) {
     applyMapDiff(yType, current, value);
     return;
   }
-  if (yType instanceof Y.Array) {
+  if (isYArray(yType)) {
     if (!Array.isArray(value)) {
       if (yType.length > 0) {
         yType.delete(0, yType.length);
@@ -181,11 +219,11 @@ function mergeChild(child, before, after) {
   ) {
     return false;
   }
-  if (Array.isArray(after) && child instanceof Y.Array) {
+  if (Array.isArray(after) && isYArray(child)) {
     applyArrayDiff(child, /** @type {any[]} */ (before), after);
     return true;
   }
-  if (isPlainObject(after) && child instanceof Y.Map) {
+  if (isPlainObject(after) && isYMap(child)) {
     applyMapDiff(child, /** @type {Record<string, any>} */ (before), after);
     return true;
   }
@@ -259,7 +297,7 @@ function insertArrayItems(yArray, index, values) {
   });
   yArray.insert(index, items);
   for (const [child, item] of pending) {
-    if (child instanceof Y.Map) {
+    if (isYMap(child)) {
       fillMap(child, item);
     } else {
       fillArray(child, item);

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `isYMap` / `isYArray` structural type detection (exported alongside the other primitives): Yjs types are recognized by their API surface rather than `instanceof`, so hosts running a different Yjs copy than the binding's own — peer-dependency installs that vendor or pin independently — work as long as the types behave like Yjs types
+
 ## [0.2.0] - 2026-10-18
 
 ### Added

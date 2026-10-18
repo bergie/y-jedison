@@ -6,7 +6,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import * as Y from "yjs";
-import { applyValue, jsonEqual, typeToJson } from "../src/diff.js";
+import {
+  applyValue,
+  isYArray,
+  isYMap,
+  jsonEqual,
+  typeToJson,
+} from "../src/diff.js";
 
 test("typeToJson converts nested shared types", () => {
   const ydoc = new Y.Doc();
@@ -149,4 +155,22 @@ test("jsonEqual compares deeply and rejects differing shapes", () => {
   assert.equal(jsonEqual({ a: 1 }, [1]), false);
   assert.equal(jsonEqual(null, {}), false);
   assert.equal(jsonEqual("x", "x"), true);
+});
+
+test("isYMap and isYArray read Y types structurally, across Yjs copies", async () => {
+  // A different Yjs copy than the binding's own: the structural checks
+  // must accept it where instanceof would fail (peer-dependency reality)
+  const other = await import(process.env.OTHER_YJS ?? "yjs");
+  const ymap = new other.Map();
+  const yarray = new other.Array();
+  assert.equal(isYMap(ymap), true, "a foreign-copy Y.Map reads structurally");
+  assert.equal(
+    isYArray(yarray),
+    true,
+    "a foreign-copy Y.Array reads structurally",
+  );
+  assert.equal(isYMap({}), false, "a plain object is not a Y.Map");
+  assert.equal(isYArray([]), false, "a plain array is not a Y.Array");
+  assert.equal(isYMap(null), false);
+  assert.equal(isYArray(null), false);
 });

@@ -24,6 +24,8 @@ export { DEFAULT_INITIATOR, JedisonBinding, yJedison } from "./binding.js";
 export {
   applyValue,
   isPlainObject,
+  isYArray,
+  isYMap,
   jsonEqual,
   pickKeys,
   typeToJson,

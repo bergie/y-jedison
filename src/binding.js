@@ -18,7 +18,14 @@
  */
 
 import * as Y from "yjs";
-import { applyValue, jsonEqual, pickKeys, typeToJson } from "./diff.js";
+import {
+  applyValue,
+  isYArray,
+  isYMap,
+  jsonEqual,
+  pickKeys,
+  typeToJson,
+} from "./diff.js";
 
 /**
  * The initiator string this binding uses when pushing remote Yjs state into
@@ -68,7 +75,7 @@ export class JedisonBinding {
    * @param {JedisonBindingOptions} [options]
    */
   constructor(jedison, yType, options = {}) {
-    if (!(yType instanceof Y.Map) && !(yType instanceof Y.Array)) {
+    if (!isYMap(yType) && !isYArray(yType)) {
       throw new TypeError(
         "y-jedison: the shared type must be a Y.Map or Y.Array",
       );
@@ -222,10 +229,10 @@ export class JedisonBinding {
  * @returns {boolean} True when the shared type carries any content
  */
 function typeHasContent(yType, json) {
-  if (yType instanceof Y.Map) {
+  if (isYMap(yType)) {
     return yType.size > 0;
   }
-  if (yType instanceof Y.Array) {
+  if (isYArray(yType)) {
     return yType.length > 0;
   }
   return json !== undefined;
